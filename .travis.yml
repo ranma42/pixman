@@ -1,0 +1,9 @@
+language: c
+
+os:
+  - linux
+  - osx
+
+script:
+  - ./autogen.sh
+  - make -j4 distcheck

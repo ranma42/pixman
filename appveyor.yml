@@ -1,0 +1,14 @@
+environment:
+  matrix:
+  - ARCH: amd64
+    MMX : off
+  - ARCH: x86
+build_script:
+  - FOR /F %%r IN ('sed -n "s/m4_define(\[pixman_major\], \(.*\))/\1/p" configure.ac') DO SET PIXMAN_MAJOR=%%r
+  - FOR /F %%r IN ('sed -n "s/m4_define(\[pixman_minor\], \(.*\))/\1/p" configure.ac') DO SET PIXMAN_MINOR=%%r
+  - FOR /F %%r IN ('sed -n "s/m4_define(\[pixman_micro\], \(.*\))/\1/p" configure.ac') DO SET PIXMAN_MICRO=%%r
+  - sed "s/@PIXMAN_VERSION_MAJOR@/%PIXMAN_MAJOR%/g;s/@PIXMAN_VERSION_MINOR@/%PIXMAN_MINOR%/g;s/@PIXMAN_VERSION_MICRO@/%PIXMAN_MICRO%/g" pixman/pixman-version.h.in > pixman/pixman-version.h
+  - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" %ARCH%
+  - C:\msys64\mingw64\bin\mingw32-make.exe -f Makefile.win32
+test_script:
+  - C:\msys64\mingw64\bin\mingw32-make.exe -f Makefile.win32 check
